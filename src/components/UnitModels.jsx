@@ -237,9 +237,9 @@ export default function UnitModels() {
                 </div>
 
                 <div className="flex flex-col gap-3 mt-auto">
-                  {selectedUnit.location && (
+                  {(selectedUnit.locationLink || selectedUnit.location) && (
                     <a 
-                      href={selectedUnit.location} 
+                      href={selectedUnit.locationLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedUnit.location)}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="w-full py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center gap-2"
@@ -352,15 +352,24 @@ function UnitCard({ unit, index, onPreview, onImageClick }) {
           {unit.details || 'تصميم عصري ومساحات رحبة تناسب جميع الأذواق.'}
         </p>
 
-        <div className="grid grid-cols-2 gap-4 mb-6 py-4 border-y border-gray-50">
-            <div className="flex items-center gap-2 text-gray-600">
-                <Maximize2 size={16} className="text-accent/80" />
-                <span className="text-sm font-medium">{unit.area} م²</span>
+        <div className="grid grid-cols-2 gap-3 mb-6">
+            <div className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50/50 transition-colors group/area">
+                <div className="flex items-center gap-1.5 text-gray-400 mb-1 group-hover/area:text-blue-500 transition-colors">
+                    <Maximize2 size={14} />
+                    <span className="text-xs font-medium">المساحة</span>
+                </div>
+                <span className="text-lg font-bold text-gray-900 dir-ltr">{unit.area} <span className="text-xs font-normal text-gray-500">م²</span></span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-                <span className="text-lg font-bold text-primary font-serif">
-                    {unit.price} <span className="text-xs font-sans font-normal text-gray-500">ر.س</span>
-                </span>
+
+            <div className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-2xl border border-gray-100 hover:border-accent/30 hover:bg-accent/5 transition-colors group/price">
+                <div className="flex items-center gap-1.5 text-gray-400 mb-1 group-hover/price:text-accent transition-colors">
+                    <Tag size={14} />
+                    <span className="text-xs font-medium">السعر</span>
+                </div>
+                <div className="flex items-center gap-1">
+                    <span className="text-lg font-bold text-primary">{unit.price}</span>
+                    <span className="text-xs font-normal text-gray-500">ر.س</span>
+                </div>
             </div>
         </div>
 
