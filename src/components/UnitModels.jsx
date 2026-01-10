@@ -17,7 +17,7 @@ export default function UnitModels() {
         .from('units')
         .select(`
           id, unit_number, type, size, price, status, main_image, model_details, model_count,
-          projects ( name, location )
+          projects ( name, location, link )
         `)
         .order('created_at', { ascending: false });
 
@@ -33,7 +33,8 @@ export default function UnitModels() {
           details: u.model_details || '',
           count: u.model_count ?? null,
           projectName: u.projects?.name || 'مشروع مساكن',
-          location: u.projects?.location || null
+          location: u.projects?.location || null,
+          locationLink: u.projects?.link || null
         }));
         setUnits(mapped);
       }
