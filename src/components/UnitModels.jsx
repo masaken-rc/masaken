@@ -103,13 +103,14 @@ export default function UnitModels() {
             </div>
 
             {/* Project Filters */}
-            <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-6 md:mb-8">
+            <div className="flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible justify-start md:justify-center gap-2 md:gap-3 mb-6 md:mb-8 pb-2 md:pb-0 scrollbar-hide px-4 md:px-0 -mx-4 md:mx-0">
               {projects.map((project) => (
                 <button
                   key={project}
                   onClick={() => setSelectedProject(project)}
                   className={`
-                    px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-300
+                    whitespace-nowrap flex-shrink-0
+                    px-4 py-2 md:px-5 md:py-2.5 rounded-full text-[11px] md:text-sm font-medium transition-all duration-300
                     ${selectedProject === project 
                       ? 'bg-primary text-white shadow-md md:shadow-lg shadow-primary/25 scale-105' 
                       : 'bg-white text-gray-600 border border-gray-100 hover:border-accent/50 hover:bg-gray-50 shadow-sm'
