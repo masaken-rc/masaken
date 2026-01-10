@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Maximize2, ArrowLeft, CheckCircle2, BedDouble, Bath, Home, ArrowUpRight, Eye, MapPin, X, CalendarCheck, Search, Filter } from 'lucide-react';
+import { Maximize2, ArrowLeft, CheckCircle2, BedDouble, Bath, Home, ArrowUpRight, Eye, MapPin, X, CalendarCheck, Search, Filter, Tag } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function UnitModels() {
