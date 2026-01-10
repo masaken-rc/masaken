@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { Phone, Mail, MapPin, Send } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Phone, Mail, MapPin, Send, MessageCircle, X, ExternalLink } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Contact() {
   const [formState, setFormState] = useState({
@@ -9,6 +9,7 @@ export default function Contact() {
     email: '',
     message: ''
   });
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,20 +17,33 @@ export default function Contact() {
     console.log('Form submitted:', formState);
   };
 
+  const handleCardClick = (item) => {
+    if (item.type === 'phone') {
+      setShowPhoneModal(true);
+    } else if (item.type === 'email') {
+      window.location.href = `mailto:${item.details[0]}`;
+    } else if (item.type === 'address') {
+      window.open('https://maps.app.goo.gl/pVDXxh6RvbsfU6QY7', '_blank');
+    }
+  };
+
   const contactInfo = [
     {
+      type: 'phone',
       icon: Phone,
       title: "اتصل بنا",
       details: ["0509996115", "92000-7936"],
       isLtr: true
     },
     {
+      type: 'email',
       icon: Mail,
       title: "راسلنا عبر البريد",
       details: ["MSC22@OUTLOOK.SA"],
       isLtr: true
     },
     {
+      type: 'address',
       icon: MapPin,
       title: "زورونا في مقرنا",
       details: ["المملكة العربية السعودية", "جدة - النزهه - شارع حراء"],
@@ -66,18 +80,22 @@ export default function Contact() {
             {contactInfo.map((item, index) => (
               <motion.div
                 key={index}
+                onClick={() => handleCardClick(item)}
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+                className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center shrink-0 text-primary">
+                  <div className="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center shrink-0 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
                     <item.icon className="w-6 h-6" />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                      <ExternalLink className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
                     <div className="space-y-1">
                       {item.details.map((detail, idx) => (
                         <p 
@@ -148,6 +166,81 @@ export default function Contact() {
           </motion.div>
         </div>
       </div>
+
+      {/* Phone Options Modal */}
+      <AnimatePresence>
+        {showPhoneModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowPhoneModal(false)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setShowPhoneModal(false)}
+                className="absolute top-4 left-4 p-2 text-gray-400 hover:text-red-500 transition-colors"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto mb-4">
+                  <Phone size={32} />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900">اختر طريقة التواصل</h3>
+                <p className="text-gray-500 mt-2">نحن سعداء بخدمتكم على مدار الساعة</p>
+              </div>
+
+              <div className="space-y-4">
+                {/* Mobile Number Actions */}
+                <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                  <p className="text-xs text-gray-500 mb-2 text-center">الجوال الموحد</p>
+                  <p className="text-lg font-bold text-primary text-center mb-4 dir-ltr">0509996115</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <a 
+                      href="tel:0509996115"
+                      className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors font-medium text-sm"
+                    >
+                      <Phone size={16} />
+                      اتصال
+                    </a>
+                    <a 
+                      href="https://wa.me/966509996115"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#25D366] text-white hover:bg-[#20bd5a] transition-colors font-medium text-sm"
+                    >
+                      <MessageCircle size={16} />
+                      واتساب
+                    </a>
+                  </div>
+                </div>
+
+                {/* Unified Number Actions */}
+                <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                  <p className="text-xs text-gray-500 mb-2 text-center">الرقم الموحد</p>
+                  <p className="text-lg font-bold text-primary text-center mb-4 dir-ltr">92000-7936</p>
+                  <a 
+                    href="tel:920007936"
+                    className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors font-medium text-sm w-full"
+                  >
+                    <Phone size={16} />
+                    اتصال
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
