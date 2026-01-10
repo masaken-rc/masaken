@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Maximize2, ArrowLeft, CheckCircle2, BedDouble, Bath, Home, ArrowUpRight, Eye, MapPin, X, CalendarCheck, Search, Filter, Tag } from 'lucide-react';
+import { Maximize2, ArrowLeft, CheckCircle2, BedDouble, Bath, Home, ArrowUpRight, Eye, MapPin, X, CalendarCheck, Search, Filter, Tag, ArrowDown } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function UnitModels() {
@@ -125,17 +125,19 @@ export default function UnitModels() {
           </motion.div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-8">
           {filteredUnits.length > 0 ? (
-            filteredUnits.map((unit, index) => (
-              <UnitCard 
-                key={unit.id} 
-                unit={unit} 
-                index={index} 
-                onPreview={() => setSelectedUnit(unit)}
-                onImageClick={() => setPreviewImage(unit.image)}
-              />
-            ))
+            <>
+              {filteredUnits.slice(0, visibleCount).map((unit, index) => (
+                <UnitCard 
+                  key={unit.id} 
+                  unit={unit} 
+                  index={index} 
+                  onPreview={() => setSelectedUnit(unit)}
+                  onImageClick={() => setPreviewImage(unit.image)}
+                />
+              ))}
+            </>
           ) : (
             <div className="col-span-full text-center py-12">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
@@ -153,6 +155,18 @@ export default function UnitModels() {
           )}
         </div>
         
+        {filteredUnits.length > visibleCount && (
+          <div className="mt-12 text-center">
+            <button
+              onClick={() => setVisibleCount(prev => prev + 4)}
+              className="inline-flex items-center gap-2 px-8 py-3 bg-white text-primary border border-gray-200 rounded-full hover:bg-gray-50 hover:border-accent/30 transition-all duration-300 shadow-sm hover:shadow-md group"
+            >
+              <span className="font-medium">عرض المزيد من النماذج</span>
+              <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+            </button>
+          </div>
+        )}
+
         <div className="mt-16 text-center">
             <a 
               href="#contact" 
@@ -340,58 +354,58 @@ function UnitCard({ unit, index, onPreview, onImageClick }) {
       </div>
 
       {/* Content */}
-      <div className="p-6 flex flex-col flex-grow relative">
+      <div className="p-3 md:p-6 flex flex-col flex-grow relative">
         <div className="flex justify-between items-start mb-2">
-            <h3 className="text-xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
+            <h3 className="text-sm md:text-xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
             {unit.title}
             </h3>
             {unit.projectName && (
-                <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded-md">{unit.projectName}</span>
+                <span className="text-[8px] md:text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded-md">{unit.projectName}</span>
             )}
         </div>
         
-        <p className="text-gray-500 text-sm mb-6 line-clamp-2 leading-relaxed h-[40px]">
+        <p className="text-gray-500 text-[10px] md:text-sm mb-3 md:mb-6 line-clamp-2 leading-relaxed h-[30px] md:h-[40px]">
           {unit.details || 'تصميم عصري ومساحات رحبة تناسب جميع الأذواق.'}
         </p>
 
-        <div className="grid grid-cols-2 gap-3 mb-6">
-            <div className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50/50 transition-colors group/area">
+        <div className="grid grid-cols-2 gap-2 md:gap-3 mb-3 md:mb-6">
+            <div className="flex flex-col items-center justify-center p-2 md:p-3 bg-gray-50 rounded-xl md:rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50/50 transition-colors group/area">
                 <div className="flex items-center gap-1.5 text-gray-400 mb-1 group-hover/area:text-blue-500 transition-colors">
-                    <Maximize2 size={14} />
-                    <span className="text-xs font-medium">المساحة</span>
+                    <Maximize2 size={12} className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                    <span className="text-[9px] md:text-xs font-medium">المساحة</span>
                 </div>
-                <span className="text-lg font-bold text-gray-900 dir-ltr">{unit.area} <span className="text-xs font-normal text-gray-500">م²</span></span>
+                <span className="text-xs md:text-lg font-bold text-gray-900 dir-ltr">{unit.area} <span className="text-[8px] md:text-xs font-normal text-gray-500">م²</span></span>
             </div>
 
-            <div className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-2xl border border-gray-100 hover:border-accent/30 hover:bg-accent/5 transition-colors group/price">
+            <div className="flex flex-col items-center justify-center p-2 md:p-3 bg-gray-50 rounded-xl md:rounded-2xl border border-gray-100 hover:border-accent/30 hover:bg-accent/5 transition-colors group/price">
                 <div className="flex items-center gap-1.5 text-gray-400 mb-1 group-hover/price:text-accent transition-colors">
-                    <Tag size={14} />
-                    <span className="text-xs font-medium">السعر</span>
+                    <Tag size={12} className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                    <span className="text-[9px] md:text-xs font-medium">السعر</span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <span className="text-lg font-bold text-primary">{unit.price}</span>
-                    <span className="text-xs font-normal text-gray-500">ر.س</span>
+                    <span className="text-xs md:text-lg font-bold text-primary">{unit.price}</span>
+                    <span className="text-[8px] md:text-xs font-normal text-gray-500">ر.س</span>
                 </div>
             </div>
         </div>
 
-        <div className="mt-auto flex items-center gap-3">
+        <div className="mt-auto flex items-center gap-2 md:gap-3">
             <button 
               onClick={onPreview}
-              className="flex-1 py-3 bg-gray-50 text-primary font-medium rounded-xl hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center gap-2 group/btn"
+              className="flex-1 py-2 md:py-3 bg-gray-50 text-primary font-medium rounded-lg md:rounded-xl hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center gap-1 md:gap-2 group/btn"
             >
-              <Eye size={18} />
-              <span>معاينة</span>
+              <Eye size={14} className="w-3.5 h-3.5 md:w-5 md:h-5" />
+              <span className="text-[10px] md:text-base">معاينة</span>
             </button>
             
             <a 
               href={`https://wa.me/966509996115?text=استفسار عن ${unit.title}`}
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-12 h-12 flex items-center justify-center rounded-xl border border-gray-100 text-gray-400 hover:border-accent hover:text-accent hover:bg-accent/5 transition-all duration-300"
+              className="w-8 h-8 md:w-12 md:h-12 flex items-center justify-center rounded-lg md:rounded-xl border border-gray-100 text-gray-400 hover:border-accent hover:text-accent hover:bg-accent/5 transition-all duration-300"
               title="تواصل عبر واتساب"
             >
-              <ArrowUpRight size={20} />
+              <ArrowUpRight size={14} className="w-3.5 h-3.5 md:w-5 md:h-5" />
             </a>
         </div>
       </div>
