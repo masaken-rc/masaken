@@ -1,13 +1,15 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Maximize2, ArrowLeft, CheckCircle2, BedDouble, Bath, Home, ArrowUpRight, Eye, MapPin, X, CalendarCheck } from 'lucide-react';
+import { Maximize2, ArrowLeft, CheckCircle2, BedDouble, Bath, Home, ArrowUpRight, Eye, MapPin, X, CalendarCheck, Search, Filter } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function UnitModels() {
   const [units, setUnits] = useState([]);
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedProject, setSelectedProject] = useState('الكل');
 
   useEffect(() => {
     const fetchUnits = async () => {
@@ -40,13 +42,36 @@ export default function UnitModels() {
     fetchUnits();
   }, []);
 
+  // Extract unique projects
+  const projects = ['الكل', ...new Set(units.map(u => u.projectName).filter(Boolean))];
+
+  // Filter units based on search and project selection
+  const filteredUnits = units.filter(unit => {
+    const matchesProject = selectedProject === 'الكل' || unit.projectName === selectedProject;
+    
+    if (!matchesProject) return false;
+
+    if (!searchTerm) return true;
+
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      unit.title?.toLowerCase().includes(searchLower) ||
+      unit.details?.toLowerCase().includes(searchLower) ||
+      unit.price?.toString().replace(/,/g, '').includes(searchLower) ||
+      unit.projectName?.toLowerCase().includes(searchLower) ||
+      unit.location?.toLowerCase().includes(searchLower) ||
+      unit.type?.toLowerCase().includes(searchLower) ||
+      unit.area?.toString().includes(searchLower)
+    );
+  });
+
   return (
     <section className="py-24 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute top-0 right-0 w-1/2 h-full bg-accent/3 -skew-x-12 translate-x-1/3 pointer-events-none" />
       
       <div className="container-custom relative z-10">
-        <div className="text-center mb-16 max-w-3xl mx-auto">
+        <div className="text-center mb-12 max-w-3xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -56,22 +81,74 @@ export default function UnitModels() {
             <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">
               نماذج <span className="text-accent">الوحدات السكنية</span>
             </h2>
-            <p className="text-gray-600 text-lg leading-relaxed">
+            <p className="text-gray-600 text-lg leading-relaxed mb-8">
               نقدم لكم مجموعة متنوعة من النماذج السكنية المصممة بعناية فائقة لتلبي كافة احتياجاتكم وتطلعاتكم للمستقبل.
             </p>
+
+            {/* Search Bar */}
+            <div className="relative max-w-xl mx-auto mb-8">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="ابحث عن وحدة، سعر، مساحة، أو مشروع..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full py-4 pr-12 pl-6 bg-white rounded-full border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-gray-700"
+                />
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                  <Search size={20} />
+                </div>
+              </div>
+            </div>
+
+            {/* Project Filters */}
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              {projects.map((project) => (
+                <button
+                  key={project}
+                  onClick={() => setSelectedProject(project)}
+                  className={`
+                    px-4 py-2 rounded-full text-sm font-medium transition-all duration-300
+                    ${selectedProject === project 
+                      ? 'bg-primary text-white shadow-lg shadow-primary/25 scale-105' 
+                      : 'bg-white text-gray-600 border border-gray-100 hover:border-accent/50 hover:bg-gray-50'
+                    }
+                  `}
+                >
+                  {project}
+                </button>
+              ))}
+            </div>
+
           </motion.div>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {units.map((unit, index) => (
-            <UnitCard 
-              key={unit.id} 
-              unit={unit} 
-              index={index} 
-              onPreview={() => setSelectedUnit(unit)}
-              onImageClick={() => setPreviewImage(unit.image)}
-            />
-          ))}
+          {filteredUnits.length > 0 ? (
+            filteredUnits.map((unit, index) => (
+              <UnitCard 
+                key={unit.id} 
+                unit={unit} 
+                index={index} 
+                onPreview={() => setSelectedUnit(unit)}
+                onImageClick={() => setPreviewImage(unit.image)}
+              />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                <Search className="text-gray-400" size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-700 mb-2">لا توجد نتائج مطابقة</h3>
+              <p className="text-gray-500">جرب البحث بكلمات مختلفة أو تغيير الفلتر</p>
+              <button 
+                onClick={() => { setSearchTerm(''); setSelectedProject('الكل'); }}
+                className="mt-4 text-accent hover:underline font-medium"
+              >
+                إعادة تعيين البحث
+              </button>
+            </div>
+          )}
         </div>
         
         <div className="mt-16 text-center">
