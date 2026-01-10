@@ -322,18 +322,18 @@ function UnitCard({ unit, index, onPreview, onImageClick }) {
       className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-accent/30 hover:shadow-xl transition-all duration-500 flex flex-col h-full relative"
     >
       {/* Image Container */}
-      <div className="relative h-[240px] overflow-hidden bg-gray-100 cursor-pointer" onClick={onImageClick}>
-        <div className="absolute top-4 right-4 z-20">
-          <span className="px-3 py-1 bg-white/95 backdrop-blur-md rounded-lg text-xs font-bold text-primary shadow-sm border border-gray-100 flex items-center gap-1">
-            <Home size={12} className="text-accent" />
+      <div className="relative h-[160px] md:h-[240px] overflow-hidden bg-gray-100 cursor-pointer" onClick={onImageClick}>
+        <div className="absolute top-2 right-2 md:top-4 md:right-4 z-20">
+          <span className="px-2 py-0.5 md:px-3 md:py-1 bg-white/95 backdrop-blur-md rounded-lg text-[10px] md:text-xs font-bold text-primary shadow-sm border border-gray-100 flex items-center gap-1">
+            <Home size={12} className="text-accent w-3 h-3 md:w-auto md:h-auto" />
             {unit.type}
           </span>
         </div>
         
         {unit.status === "متاح" && (
-            <div className="absolute top-4 left-4 z-20">
-              <span className="px-3 py-1 bg-emerald-500/90 backdrop-blur-md rounded-lg text-xs font-bold text-white shadow-sm flex items-center gap-1">
-                <CheckCircle2 size={12} /> متاح
+            <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20">
+              <span className="px-2 py-0.5 md:px-3 md:py-1 bg-emerald-500/90 backdrop-blur-md rounded-lg text-[10px] md:text-xs font-bold text-white shadow-sm flex items-center gap-1">
+                <CheckCircle2 size={12} className="w-3 h-3 md:w-auto md:h-auto" /> متاح
               </span>
             </div>
         )}
