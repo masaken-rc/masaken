@@ -87,32 +87,32 @@ export default function UnitModels() {
             </p>
 
             {/* Search Bar */}
-            <div className="relative max-w-xl mx-auto mb-8">
+            <div className="relative max-w-xl mx-auto mb-6 md:mb-8">
               <div className="relative">
                 <input
                   type="text"
                   placeholder="ابحث عن وحدة، سعر، مساحة، أو مشروع..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full py-4 pr-12 pl-6 bg-white rounded-full border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-gray-700"
+                  className="w-full py-3 md:py-4 pr-10 md:pr-12 pl-5 md:pl-6 bg-white rounded-full border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all text-sm md:text-base text-gray-700 placeholder:text-xs md:placeholder:text-base"
                 />
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
-                  <Search size={20} />
+                <div className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                  <Search size={18} className="md:w-5 md:h-5" />
                 </div>
               </div>
             </div>
 
             {/* Project Filters */}
-            <div className="flex flex-wrap justify-center gap-3 mb-8">
+            <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-6 md:mb-8">
               {projects.map((project) => (
                 <button
                   key={project}
                   onClick={() => setSelectedProject(project)}
                   className={`
-                    px-4 py-2 rounded-full text-sm font-medium transition-all duration-300
+                    px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-300
                     ${selectedProject === project 
-                      ? 'bg-primary text-white shadow-lg shadow-primary/25 scale-105' 
-                      : 'bg-white text-gray-600 border border-gray-100 hover:border-accent/50 hover:bg-gray-50'
+                      ? 'bg-primary text-white shadow-md md:shadow-lg shadow-primary/25 scale-105' 
+                      : 'bg-white text-gray-600 border border-gray-100 hover:border-accent/50 hover:bg-gray-50 shadow-sm'
                     }
                   `}
                 >

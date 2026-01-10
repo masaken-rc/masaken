@@ -477,8 +477,14 @@ export default function ProjectForm({ project, onSuccess }) {
                  ) : (
                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                          {images.map((img, idx) => (
-                             <div key={img.id || idx} className="relative group rounded-lg overflow-hidden h-40">
-                                 <img src={img.image_url} alt="" className="w-full h-full object-cover" />
+                             <div key={img.id || idx} className="relative group rounded-lg overflow-hidden h-40 bg-gray-100">
+                                 <img 
+                                    src={img.image_url} 
+                                    alt="" 
+                                    loading="lazy"
+                                    decoding="async"
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                                 />
                                  <button 
                                     onClick={() => handleDeleteImage(img.id)}
                                     className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
