@@ -40,9 +40,9 @@ export default function MapSection() {
           </div>
           
           <iframe 
-            src="https://maps.google.com/maps?q=إدارة+شركة+مساكن+الرفاهية+للمقاولات+العامة&t=&z=13&ie=UTF8&iwloc=&output=embed"
+            src="https://maps.google.com/maps?q=Jeddah+Al+Nuzha+Hira+Street&t=&z=13&ie=UTF8&iwloc=&output=embed"
             width="100%" 
-            height="100%" 
+            height="100%"  
             style={{ border: 0 }} 
             allowFullScreen="" 
             loading="lazy" 

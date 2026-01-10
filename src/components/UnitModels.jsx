@@ -250,7 +250,7 @@ export default function UnitModels() {
                   )}
                   
                   <a 
-                    href={`https://wa.me/966570109444?text=أرغب بحجز ${selectedUnit.title} في ${selectedUnit.projectName}`}
+                    href={`https://wa.me/966509996115?text=أرغب بحجز ${selectedUnit.title} في ${selectedUnit.projectName}`}
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="w-full py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
@@ -374,7 +374,7 @@ function UnitCard({ unit, index, onPreview, onImageClick }) {
             </button>
             
             <a 
-              href={`https://wa.me/966570109444?text=استفسار عن ${unit.title}`}
+              href={`https://wa.me/966509996115?text=استفسار عن ${unit.title}`}
               target="_blank" 
               rel="noopener noreferrer"
               className="w-12 h-12 flex items-center justify-center rounded-xl border border-gray-100 text-gray-400 hover:border-accent hover:text-accent hover:bg-accent/5 transition-all duration-300"
