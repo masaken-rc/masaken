@@ -214,6 +214,43 @@ export default function ProjectForm({ project, onSuccess }) {
       }
   };
 
+  const handleDeleteImage = async (imageId) => {
+    if (!confirm('هل أنت متأكد من حذف هذه الصورة؟')) return;
+    try {
+        // setLoading(true); // Optional: might flicker too much for small actions
+        const { error } = await supabase
+            .from('project_images')
+            .delete()
+            .eq('id', imageId);
+
+        if (error) throw error;
+
+        setImages(prev => prev.filter(img => img.id !== imageId));
+        setMessage({ type: 'success', text: 'تم حذف الصورة بنجاح' });
+    } catch (error) {
+        console.error(error);
+        setMessage({ type: 'error', text: 'فشل حذف الصورة' });
+    }
+  };
+
+  const handleUpdateImageType = async (imageId, newType) => {
+      try {
+          const { error } = await supabase
+              .from('project_images')
+              .update({ type: newType })
+              .eq('id', imageId);
+
+          if (error) throw error;
+
+          setImages(prev => prev.map(img => 
+              img.id === imageId ? { ...img, type: newType } : img
+          ));
+      } catch (error) {
+          console.error(error);
+          setMessage({ type: 'error', text: 'فشل تحديث نوع الصورة' });
+      }
+  };
+
   // --- Render Helpers ---
 
   const TabButton = ({ id, icon: Icon, label, disabled }) => (
@@ -440,16 +477,20 @@ export default function ProjectForm({ project, onSuccess }) {
                  ) : (
                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                          {images.map((img, idx) => (
-                             <div key={idx} className="relative group rounded-lg overflow-hidden h-40">
+                             <div key={img.id || idx} className="relative group rounded-lg overflow-hidden h-40">
                                  <img src={img.image_url} alt="" className="w-full h-full object-cover" />
-                                 <button className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                 <button 
+                                    onClick={() => handleDeleteImage(img.id)}
+                                    className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                    title="حذف الصورة"
+                                 >
                                      <X size={14} />
                                  </button>
                                  <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                      <select 
-                                        className="w-full text-xs bg-transparent text-white border-none outline-none"
-                                        value={img.type}
-                                        onChange={() => {}} // Handle type change
+                                        className="w-full text-xs bg-transparent text-white border-none outline-none cursor-pointer"
+                                        value={img.type || 'interior'}
+                                        onChange={(e) => handleUpdateImageType(img.id, e.target.value)}
                                      >
                                          <option value="interior" className="text-black">داخلية</option>
                                          <option value="exterior" className="text-black">خارجية</option>
