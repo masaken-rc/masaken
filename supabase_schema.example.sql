@@ -95,14 +95,14 @@ alter table public.project_files enable row level security;
 
 -- 4. إنشاء المستخدم المسؤول (Admin User Creation)
 -- ملاحظة: نقوم بإدخاله مباشرة في auth.users
--- كلمة السر: Zohair@1999@
+-- كلمة السر: [كلمة السر هنا]
 
 DO $$
 DECLARE
   user_id uuid := gen_random_uuid();
 BEGIN
   -- التحقق مما إذا كان المستخدم موجوداً لتجنب التكرار
-  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'zizoalzohairy@gmail.com') THEN
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'admin@example.com') THEN
     INSERT INTO auth.users (
       instance_id,
       id,
@@ -126,13 +126,13 @@ BEGIN
       user_id,
       'authenticated',
       'authenticated',
-      'zizoalzohairy@gmail.com',
-      crypt('Zohair@1999@', gen_salt('bf')), -- تشفير كلمة السر
+      'admin@example.com',
+      crypt('password123', gen_salt('bf')), -- تشفير كلمة السر
       now(),
       now(),
       now(),
       '{"provider":"email","providers":["email"]}',
-      '{"full_name":"Admin Zohair"}',
+      '{"full_name":"Admin User"}',
       now(),
       now(),
       '',
@@ -154,7 +154,7 @@ BEGIN
     ) VALUES (
       gen_random_uuid(),
       user_id,
-      format('{"sub":"%s","email":"zizoalzohairy@gmail.com"}', user_id)::jsonb,
+      format('{"sub":"%s","email":"admin@example.com"}', user_id)::jsonb,
       'email',
       user_id::text,
       now(),
@@ -186,11 +186,11 @@ create policy "Public Read Units" on public.units for select using (true);
 create policy "Public Read Files" on public.project_files for select using (true);
 
 -- السماح للمدير فقط بالتعديل والإضافة والحذف (Admin Full Access)
-create policy "Admin Full Access Projects" on public.projects for all using ((auth.jwt() ->> 'email') = 'zizoalzohairy@gmail.com');
-create policy "Admin Full Access Images" on public.project_images for all using ((auth.jwt() ->> 'email') = 'zizoalzohairy@gmail.com');
-create policy "Admin Full Access Sections" on public.project_sections for all using ((auth.jwt() ->> 'email') = 'zizoalzohairy@gmail.com');
-create policy "Admin Full Access Units" on public.units for all using ((auth.jwt() ->> 'email') = 'zizoalzohairy@gmail.com');
-create policy "Admin Full Access Files" on public.project_files for all using ((auth.jwt() ->> 'email') = 'zizoalzohairy@gmail.com');
+create policy "Admin Full Access Projects" on public.projects for all using ((auth.jwt() ->> 'email') = 'admin@example.com');
+create policy "Admin Full Access Images" on public.project_images for all using ((auth.jwt() ->> 'email') = 'admin@example.com');
+create policy "Admin Full Access Sections" on public.project_sections for all using ((auth.jwt() ->> 'email') = 'admin@example.com');
+create policy "Admin Full Access Units" on public.units for all using ((auth.jwt() ->> 'email') = 'admin@example.com');
+create policy "Admin Full Access Files" on public.project_files for all using ((auth.jwt() ->> 'email') = 'admin@example.com');
 
 -- 6. إنشاء Buckets للتخزين (Storage)
 
@@ -200,6 +200,6 @@ drop policy if exists "Admin Update Files" on storage.objects;
 drop policy if exists "Admin Delete Files" on storage.objects;
 
 create policy "Public Access Files" on storage.objects for select using ( bucket_id = 'files' );
-create policy "Admin Upload Files" on storage.objects for insert with check ( bucket_id = 'files' and (auth.jwt() ->> 'email') = 'zizoalzohairy@gmail.com' );
-create policy "Admin Update Files" on storage.objects for update using ( bucket_id = 'files' and (auth.jwt() ->> 'email') = 'zizoalzohairy@gmail.com' );
-create policy "Admin Delete Files" on storage.objects for delete using ( bucket_id = 'files' and (auth.jwt() ->> 'email') = 'zizoalzohairy@gmail.com' );
+create policy "Admin Upload Files" on storage.objects for insert with check ( bucket_id = 'files' and (auth.jwt() ->> 'email') = 'admin@example.com' );
+create policy "Admin Update Files" on storage.objects for update using ( bucket_id = 'files' and (auth.jwt() ->> 'email') = 'admin@example.com' );
+create policy "Admin Delete Files" on storage.objects for delete using ( bucket_id = 'files' and (auth.jwt() ->> 'email') = 'admin@example.com' );
