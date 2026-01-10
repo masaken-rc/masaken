@@ -1,18 +1,24 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Maximize2, ArrowLeft, CheckCircle2, BedDouble, Bath, Home, ArrowUpRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Maximize2, ArrowLeft, CheckCircle2, BedDouble, Bath, Home, ArrowUpRight, Eye, MapPin, X, CalendarCheck } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function UnitModels() {
   const [units, setUnits] = useState([]);
+  const [selectedUnit, setSelectedUnit] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
 
   useEffect(() => {
     const fetchUnits = async () => {
       const { data } = await supabase
         .from('units')
-        .select('id, unit_number, type, size, price, status, main_image, model_details, model_count')
+        .select(`
+          id, unit_number, type, size, price, status, main_image, model_details, model_count,
+          projects ( name, location )
+        `)
         .order('created_at', { ascending: false });
+
       if (data) {
         const mapped = data.map((u) => ({
           id: u.id,
@@ -24,6 +30,8 @@ export default function UnitModels() {
           status: u.status === 'available' ? 'متاح' : u.status === 'reserved' ? 'محجوزة' : 'مباعة',
           details: u.model_details || '',
           count: u.model_count ?? null,
+          projectName: u.projects?.name || 'مشروع مساكن',
+          location: u.projects?.location || null
         }));
         setUnits(mapped);
       }
@@ -56,7 +64,13 @@ export default function UnitModels() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {units.map((unit, index) => (
-            <UnitCard key={unit.id} unit={unit} index={index} />
+            <UnitCard 
+              key={unit.id} 
+              unit={unit} 
+              index={index} 
+              onPreview={() => setSelectedUnit(unit)}
+              onImageClick={() => setPreviewImage(unit.image)}
+            />
           ))}
         </div>
         
@@ -70,21 +84,152 @@ export default function UnitModels() {
             </a>
         </div>
       </div>
+
+      {/* Unit Details Modal */}
+      <AnimatePresence>
+        {selectedUnit && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setSelectedUnit(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-3xl overflow-hidden max-w-4xl w-full shadow-2xl relative flex flex-col md:flex-row max-h-[90vh]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setSelectedUnit(null)}
+                className="absolute top-4 left-4 z-10 p-2 bg-white/80 backdrop-blur rounded-full hover:bg-red-50 hover:text-red-500 transition-colors"
+              >
+                <X size={20} />
+              </button>
+
+              {/* Image Section */}
+              <div className="md:w-1/2 relative h-64 md:h-auto bg-gray-100 cursor-pointer group" onClick={() => setPreviewImage(selectedUnit.image)}>
+                <img 
+                  src={selectedUnit.image} 
+                  alt={selectedUnit.title} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <Maximize2 className="text-white drop-shadow-md" size={32} />
+                </div>
+                <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-sm font-bold text-primary shadow-sm">
+                  {selectedUnit.projectName}
+                </div>
+              </div>
+
+              {/* Details Section */}
+              <div className="md:w-1/2 p-8 overflow-y-auto">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${selectedUnit.status === 'متاح' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}`}>
+                    {selectedUnit.status}
+                  </span>
+                  <span className="text-gray-400 text-sm">#{selectedUnit.type}</span>
+                </div>
+
+                <h3 className="text-3xl font-bold text-primary mb-4">{selectedUnit.title}</h3>
+                
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-gray-50 p-4 rounded-xl">
+                    <span className="block text-gray-400 text-xs mb-1">المساحة</span>
+                    <div className="flex items-center gap-2 text-primary font-bold">
+                      <Maximize2 size={18} className="text-accent" />
+                      <span>{selectedUnit.area} م²</span>
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-xl">
+                    <span className="block text-gray-400 text-xs mb-1">السعر التقريبي</span>
+                    <div className="flex items-center gap-2 text-primary font-bold">
+                      <span className="text-lg">{selectedUnit.price}</span>
+                      <span className="text-xs font-normal">ر.س</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mb-8">
+                  <h4 className="font-bold text-gray-800 mb-2">التفاصيل</h4>
+                  <p className="text-gray-600 leading-relaxed">
+                    {selectedUnit.details || 'يتميز هذا النموذج بتصميم عصري فريد يجمع بين الفخامة والعملية، مع استغلال أمثل للمساحات لتوفير الراحة القصوى للسكان.'}
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-3 mt-auto">
+                  {selectedUnit.location && (
+                    <a 
+                      href={selectedUnit.location} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="w-full py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <MapPin size={18} className="text-accent" />
+                      موقع المشروع على الخريطة
+                    </a>
+                  )}
+                  
+                  <a 
+                    href={`https://wa.me/966570109444?text=أرغب بحجز ${selectedUnit.title} في ${selectedUnit.projectName}`}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="w-full py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+                  >
+                    <CalendarCheck size={18} />
+                    احجز وحدتك الآن
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Image Lightbox */}
+      <AnimatePresence>
+        {previewImage && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4"
+            onClick={() => setPreviewImage(null)}
+          >
+            <button 
+              className="absolute top-6 left-6 text-white/70 hover:text-white transition-colors"
+              onClick={() => setPreviewImage(null)}
+            >
+              <X size={32} />
+            </button>
+            <motion.img 
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              src={previewImage} 
+              alt="Preview" 
+              className="max-w-full max-h-[90vh] rounded-lg shadow-2xl object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
 
-function UnitCard({ unit, index }) {
+function UnitCard({ unit, index, onPreview, onImageClick }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       viewport={{ once: true }}
-      className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-accent/30 hover:shadow-xl transition-all duration-500 flex flex-col h-full"
+      className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-accent/30 hover:shadow-xl transition-all duration-500 flex flex-col h-full relative"
     >
       {/* Image Container */}
-      <div className="relative h-[240px] overflow-hidden bg-gray-100">
+      <div className="relative h-[240px] overflow-hidden bg-gray-100 cursor-pointer" onClick={onImageClick}>
         <div className="absolute top-4 right-4 z-20">
           <span className="px-3 py-1 bg-white/95 backdrop-blur-md rounded-lg text-xs font-bold text-primary shadow-sm border border-gray-100 flex items-center gap-1">
             <Home size={12} className="text-accent" />
@@ -95,7 +240,7 @@ function UnitCard({ unit, index }) {
         {unit.status === "متاح" && (
             <div className="absolute top-4 left-4 z-20">
               <span className="px-3 py-1 bg-emerald-500/90 backdrop-blur-md rounded-lg text-xs font-bold text-white shadow-sm flex items-center gap-1">
-                  <CheckCircle2 size={12} /> متاح
+                <CheckCircle2 size={12} /> متاح
               </span>
             </div>
         )}
@@ -105,14 +250,26 @@ function UnitCard({ unit, index }) {
             style={{ backgroundImage: `url(${unit.image})` }}
         />
         
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+        
+        {/* Hover Overlay Icon */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+             <Maximize2 className="text-white" size={20} />
+          </div>
+        </div>
       </div>
 
       {/* Content */}
       <div className="p-6 flex flex-col flex-grow relative">
-        <h3 className="text-xl font-bold text-primary mb-2 group-hover:text-accent transition-colors duration-300">
-          {unit.title}
-        </h3>
+        <div className="flex justify-between items-start mb-2">
+            <h3 className="text-xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
+            {unit.title}
+            </h3>
+            {unit.projectName && (
+                <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded-md">{unit.projectName}</span>
+            )}
+        </div>
         
         <p className="text-gray-500 text-sm mb-6 line-clamp-2 leading-relaxed h-[40px]">
           {unit.details || 'تصميم عصري ومساحات رحبة تناسب جميع الأذواق.'}
@@ -123,27 +280,27 @@ function UnitCard({ unit, index }) {
                 <Maximize2 size={16} className="text-accent/80" />
                 <span className="text-sm font-medium">{unit.area} م²</span>
             </div>
-            {unit.count !== null && (
-               <div className="flex items-center gap-2 text-gray-600">
-                  <span className="text-xs text-gray-400">العدد:</span>
-                  <span className="text-sm font-medium">{unit.count}</span>
-               </div>
-            )}
-        </div>
-
-        <div className="mt-auto flex items-center justify-between">
-            <div className="flex flex-col">
-                <span className="text-xs text-gray-400 mb-1">يبدأ من</span>
+            <div className="flex items-center gap-2 text-gray-600">
                 <span className="text-lg font-bold text-primary font-serif">
                     {unit.price} <span className="text-xs font-sans font-normal text-gray-500">ر.س</span>
                 </span>
             </div>
+        </div>
+
+        <div className="mt-auto flex items-center gap-3">
+            <button 
+              onClick={onPreview}
+              className="flex-1 py-3 bg-gray-50 text-primary font-medium rounded-xl hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center gap-2 group/btn"
+            >
+              <Eye size={18} />
+              <span>معاينة</span>
+            </button>
             
             <a 
               href={`https://wa.me/966570109444?text=استفسار عن ${unit.title}`}
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-primary hover:bg-accent hover:text-white transition-all duration-300 group-hover:scale-110"
+              className="w-12 h-12 flex items-center justify-center rounded-xl border border-gray-100 text-gray-400 hover:border-accent hover:text-accent hover:bg-accent/5 transition-all duration-300"
               title="تواصل عبر واتساب"
             >
               <ArrowUpRight size={20} />
