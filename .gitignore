@@ -3,3 +3,8 @@
 supabase_schema.sql
 supabase_storage.sql
 node_modules
+.env.local
+.next/
+build/
+dist/
+.DS_Store

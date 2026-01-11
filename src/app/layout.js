@@ -43,7 +43,7 @@ const ibmPlexSansArabic = localFont({
 });
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://masaken-rc.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://masaken-rc.com.sa'),
   title: {
     default: "مساكن الرفاهية | للتطوير العقاري",
     template: "%s | مساكن الرفاهية"
