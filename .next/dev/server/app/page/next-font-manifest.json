@@ -1,0 +1,16 @@
+{
+  "pages": {},
+  "app": {
+    "[project]/src/app/page": [
+      "static/media/IBMPlexSansArabic_Thin-s.p.778334ef.ttf",
+      "static/media/IBMPlexSansArabic_ExtraLight-s.p.cb98649d.ttf",
+      "static/media/IBMPlexSansArabic_Light-s.p.be802236.ttf",
+      "static/media/IBMPlexSansArabic_Regular-s.p.fc7df40d.ttf",
+      "static/media/IBMPlexSansArabic_Medium-s.p.902e9abe.ttf",
+      "static/media/IBMPlexSansArabic_SemiBold-s.p.a18a111a.ttf",
+      "static/media/IBMPlexSansArabic_Bold-s.p.9482323d.ttf"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pagesUsingSizeAdjust": false
+}

@@ -1,0 +1,75 @@
+/* [project]/src/app/ibmplexsansarabic_e937d17e.module.css [app-client] (css) */
+@font-face {
+  font-family: ibmPlexSansArabic;
+  src: url("../media/IBMPlexSansArabic_Thin-s.p.778334ef.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: ibmPlexSansArabic;
+  src: url("../media/IBMPlexSansArabic_ExtraLight-s.p.cb98649d.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: ibmPlexSansArabic;
+  src: url("../media/IBMPlexSansArabic_Light-s.p.be802236.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: ibmPlexSansArabic;
+  src: url("../media/IBMPlexSansArabic_Regular-s.p.fc7df40d.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: ibmPlexSansArabic;
+  src: url("../media/IBMPlexSansArabic_Medium-s.p.902e9abe.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: ibmPlexSansArabic;
+  src: url("../media/IBMPlexSansArabic_SemiBold-s.p.a18a111a.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: ibmPlexSansArabic;
+  src: url("../media/IBMPlexSansArabic_Bold-s.p.9482323d.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: ibmPlexSansArabic Fallback;
+  src: local(Arial);
+  ascent-override: 107.29%;
+  descent-override: 41.04%;
+  line-gap-override: 0.0%;
+  size-adjust: 101.13%;
+}
+
+.ibmplexsansarabic_e937d17e-module__ToPiaW__className {
+  font-family: ibmPlexSansArabic, ibmPlexSansArabic Fallback;
+}
+
+.ibmplexsansarabic_e937d17e-module__ToPiaW__variable {
+  --font-ibm-plex: "ibmPlexSansArabic", "ibmPlexSansArabic Fallback";
+}
+
+/*# sourceMappingURL=src_app_ibmplexsansarabic_e937d17e_module_css_bad6b30c._.single.css.map*/
