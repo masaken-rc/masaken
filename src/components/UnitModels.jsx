@@ -11,6 +11,8 @@ export default function UnitModels() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState('الكل');
 
+  const [visibleCount, setVisibleCount] = useState(8);
+
   useEffect(() => {
     const fetchUnits = async () => {
       const { data } = await supabase
